@@ -1,107 +1,91 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Malla Psicología</title>
-
-<style>
-  body {
-    font-family: Arial;
-    background: #f4f6f8;
-    padding: 20px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .materia {
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .bloqueada { background: #ccc; cursor: not-allowed; }
-  .disponible { background: #ffd966; }
-  .regular { background: #6fa8dc; color: white; }
-  .aprobada { background: #6aa84f; color: white; }
-</style>
-</head>
-
-<body>
-
-<h2>Malla Interactiva Psicología</h2>
-
-<div class="grid" id="malla"></div>
-
 <script>
+
 const materias = [
-  {
-    id: "intro",
-    nombre: "Introducción a la Psicología",
-    correlativasCursada: [],
-    correlativasFinal: []
-  },
-  {
-    id: "historia",
-    nombre: "Historia de la Psicología",
-    correlativasCursada: [],
-    correlativasFinal: []
-  },
-  {
-    id: "problemas",
-    nombre: "Problemas Epistemológicos",
-    correlativasCursada: ["intro"],
-    correlativasFinal: ["intro"]
-  }
+  // PRIMER AÑO
+  { id:"intro", nombre:"001 - Introducción a la Psicología", correlativas:[] },
+  { id:"filo", nombre:"041 - Filosofía del Hombre", correlativas:[] },
+  { id:"epi", nombre:"042 - Epistemología General", correlativas:[] },
+  { id:"grap1", nombre:"007 - G.R.A.P. I", correlativas:[] },
+
+  { id:"historia", nombre:"043 - Historia Social de la Psicología", correlativas:["intro"] },
+  { id:"antro", nombre:"044 - Antropología", correlativas:[] },
+  { id:"bio", nombre:"013 - Biología Humana", correlativas:[] },
+  { id:"investigacion", nombre:"045 - Introducción a la Investigación Psicológica", correlativas:["intro"] },
+  { id:"pepp1", nombre:"184 - PEPP I", correlativas:["intro"] },
+
+  // SEGUNDO AÑO
+  { id:"sist1", nombre:"046 - Sistemas Psicológicos Contemporáneos I", correlativas:["intro","filo","epi","historia"] },
+  { id:"socio", nombre:"047 - Sociología", correlativas:[] },
+  { id:"psicoanalisis", nombre:"048 - Introducción a la Teoría Psicoanalítica", correlativas:["intro","historia"] },
+  { id:"nucleo1", nombre:"049 - Núcleos Problemáticos I", correlativas:["epi","investigacion"] },
+  { id:"desarrollo", nombre:"050 - Psicología del Desarrollo", correlativas:["intro","bio"] },
+  { id:"grap2", nombre:"014 - G.R.A.P. II", correlativas:["intro","grap1"] },
+
+  { id:"sist2", nombre:"051 - Sistemas Psicológicos Contemporáneos II", correlativas:["sist1"] },
+  { id:"latam", nombre:"052 - Problemas Sociales Latinoamericanos", correlativas:["antro","socio"] },
+  { id:"neuro", nombre:"020 - Neuropsicología", correlativas:["intro","bio"] },
+  { id:"pepp2", nombre:"185 - PEPP II", correlativas:["pepp1"] },
+
+  // TERCER AÑO
+  { id:"aprendizaje", nombre:"010 - Teorías del Aprendizaje", correlativas:["intro","desarrollo"] },
+  { id:"metodo", nombre:"053 - Estrategias Cualitativas y Cuantitativas", correlativas:["intro","epi","investigacion"] },
+  { id:"social", nombre:"019 - Psicología Social", correlativas:["intro","antro","socio"] },
+  { id:"cognitiva", nombre:"054 - Psicología Cognitiva", correlativas:["intro","neuro"] },
+  { id:"grap3", nombre:"021 - G.R.A.P. III", correlativas:["psicoanalisis","grap2"] },
+
+  { id:"psicoanalisis2", nombre:"015 - Desarrollos del Psicoanálisis", correlativas:["psicoanalisis"] },
+  { id:"instrumentos1", nombre:"056 - Instrumentos I", correlativas:["aprendizaje","sist1","metodo","cognitiva"] },
+  { id:"grupos", nombre:"057 - Psicología de los Grupos", correlativas:["social","psicoanalisis"] },
+  { id:"instrumentos2", nombre:"058 - Instrumentos II", correlativas:["sist1","psicoanalisis","metodo"] },
+  { id:"nucleo2", nombre:"059 - Núcleos Problemáticos II", correlativas:["nucleo1","metodo"] },
+  { id:"pepp3", nombre:"186 - PEPP III", correlativas:["pepp2"] },
+
+  // CUARTO AÑO
+  { id:"psicopato", nombre:"182 - Psicopatología", correlativas:["sist2","neuro","cognitiva","psicoanalisis2"] },
+  { id:"institucional", nombre:"061 - Psicología Institucional", correlativas:["sist2","latam","grupos"] },
+  { id:"epi_psico", nombre:"027 - Epistemología de la Psicología", correlativas:["sist2","metodo"] },
+  { id:"psicodiag", nombre:"183 - Psicodiagnóstico", correlativas:["instrumentos1","instrumentos2"] },
+  { id:"pepp4", nombre:"187 - PEPP IV", correlativas:["pepp3"] },
+
+  { id:"clinica", nombre:"063 - Psicología Clínica", correlativas:["psicopato","institucional","psicodiag","pepp4"] },
+  { id:"juridica", nombre:"064 - Psicología Jurídica", correlativas:["psicopato","institucional","psicodiag","pepp4"] },
+  { id:"educacional", nombre:"065 - Psicología Educacional", correlativas:["psicopato","institucional","psicodiag","pepp4"] },
+  { id:"laboral", nombre:"066 - Psicología Laboral", correlativas:["psicopato","institucional","psicodiag","pepp4"] },
+  { id:"grap4", nombre:"028 - G.R.A.P. IV", correlativas:["grap3","latam","grupos"] },
+
+  // QUINTO AÑO
+  { id:"deonto", nombre:"062 - Deontología Psicológica", correlativas:["sist2"] },
+  { id:"seminarios", nombre:"067/068/069 - Seminarios", correlativas:["clinica","juridica","educacional","laboral"] },
+  { id:"residencia", nombre:"070 - Residencia", correlativas:["clinica","juridica","educacional","laboral"] }
 ];
 
-let estado = {}; // 0 bloqueada, 1 disponible, 2 regular, 3 aprobada
+let estado = {};
+materias.forEach(m => estado[m.id] = 0);
 
-// Inicializar estados
-materias.forEach(m => {
-  estado[m.id] = 0;
-});
-
-// Verifica si puede cursar
-function puedeCursar(materia) {
-  return materia.correlativasCursada.every(id => estado[id] === 3);
+function puedeCursar(m) {
+  return m.correlativas.every(id => estado[id] >= 2);
 }
 
-// Verifica si puede rendir final
-function puedeFinal(materia) {
-  return materia.correlativasFinal.every(id => estado[id] === 3);
+function puedeFinal(m) {
+  return m.correlativas.every(id => estado[id] === 3);
 }
 
-// Actualizar estados
 function actualizarEstados() {
   materias.forEach(m => {
     if (estado[m.id] === 3) return;
 
-    if (puedeCursar(m)) {
-      estado[m.id] = Math.max(estado[m.id], 1);
-    }
-
-    if (estado[m.id] === 2 && puedeFinal(m)) {
-      estado[m.id] = 2;
-    }
+    if (puedeCursar(m)) estado[m.id] = Math.max(estado[m.id], 1);
   });
 }
 
-// Render
 function render() {
   actualizarEstados();
-
-  const contenedor = document.getElementById("malla");
-  contenedor.innerHTML = "";
+  const cont = document.getElementById("malla");
+  cont.innerHTML = "";
 
   materias.forEach(m => {
     const div = document.createElement("div");
-    div.classList.add("materia");
+    div.className = "materia";
 
     if (estado[m.id] === 0) div.classList.add("bloqueada");
     if (estado[m.id] === 1) div.classList.add("disponible");
@@ -114,17 +98,15 @@ function render() {
       if (estado[m.id] === 0) return;
 
       if (estado[m.id] === 1) estado[m.id] = 2;
-      else if (estado[m.id] === 2) estado[m.id] = 3;
+      else if (estado[m.id] === 2 && puedeFinal(m)) estado[m.id] = 3;
 
       render();
     };
 
-    contenedor.appendChild(div);
+    cont.appendChild(div);
   });
 }
 
 render();
-</script>
 
-</body>
-</html>
+</script>
